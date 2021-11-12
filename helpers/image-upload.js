@@ -8,7 +8,7 @@ const imageStorage = multer.diskStorage({
 
         if(req.baseUrl.includes("users")) {
             folder = "users"
-        } else if(req.baseUrl.includes("products")){
+        } else if(req.baseUrl.includes("product")){
             folder = "product"
         }
 
@@ -17,7 +17,8 @@ const imageStorage = multer.diskStorage({
     },
 
     filename: function(req, file, cb){
-        cb(null, Date.now() + path.extname(file.originalname))
+        cb(null, Date.now() + String(Math.floor(Math.random() * 1000))
+         + path.extname(file.originalname))
 
     }, 
 })
@@ -30,7 +31,7 @@ const imageUpload = multer({
         }
         cb(undefined, true)
     }
-    
+
 })
 
 module.exports = { imageUpload }
