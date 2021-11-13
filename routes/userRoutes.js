@@ -9,5 +9,4 @@ router.get('/checkuser', UserController.checkUser)
 router.get('/:id', UserController.getUserById)
 router.patch('/edit/:id', verifyToken, imageUpload.single("image"), UserController.editUser)
 
-
 module.exports = router
