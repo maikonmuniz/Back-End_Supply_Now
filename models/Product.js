@@ -25,7 +25,6 @@ const Product = mongoose.model(
             required: true
         },
 
-        user: Object,
         company: Object
 
     }, {timestamps: true},
