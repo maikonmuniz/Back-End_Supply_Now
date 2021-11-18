@@ -1,9 +1,7 @@
 const mongoose = require('../db/conn')
 const { Schema } = mongoose
 
-const User = mongoose.model(
-    'User',
-    new Schema({
+const User = new Schema({
 
         name: {
             type: String,
@@ -14,6 +12,26 @@ const User = mongoose.model(
             type: String,
             required: true
         },
+
+        cpf: {
+            type: String,
+            required: true
+        },
+
+        tipo: {
+            type: String,
+            enum: ['M', 'P'],
+            required: true,
+        },
+
+        // campo - implementação de api para pagamento 
+
+        // recipientId:{
+        //     type: String,
+        //     required: function(){
+        //         return this.tipo === 'M';
+        //     }
+        // },
 
         password: {
             type: String,
@@ -29,11 +47,20 @@ const User = mongoose.model(
             required: true
         },
 
-    }, {timestamps: true},
-    
-    ),
+        location: {
+            type: {type: String},
+            coordinates: [],
+        },
+        
+        socketId: String
 
-)
+    },
+
+    {timestamps: true},
+
+    )
 
 
-module.exports = User
+User.index({ location: '2dsphere' });
+
+module.exports = mongoose.model('User', User)

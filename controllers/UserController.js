@@ -1,77 +1,120 @@
 const User = require('../models/User')
+const Car = require('../models/Car')
+const express = require("express")
 const bcrypt = require('bcrypt')
 const createUserToken = require('../helpers/create-token-user')
 const getUserByToken = require('../helpers/get-user-by-token')
 const getToken = require('../helpers/get-token')
 const jwt = require('jsonwebtoken')
-
+const { validationResult } = require('express-validator')
 
 module.exports = class UserController{
 
     static async register(req, res){
 
-        const { name, email, phone, password, confirmpassword } = req.body
+        const errors = validationResult(req);
 
-        if (!name) {
+        if(!errors.isEmpty()){
+
+            return res.status(400).json({errors: errors.array()})
+
+        }
+
+        const { user, car } = req.body
+
+        if (!user.name) {
             res.status(422).json({message: 'O nome é obrigatorio'})
             return
         }
 
-        if (!email) {
+        if (!user.email) {
             res.status(422).json({message: 'O email é obrigatorio'})
             return
         }
 
-        if (!phone) {
+        if (!user.phone) {
             res.status(422).json({message: 'O telefone é obrigatorio'})
             return
         }
 
-        if (!password) {
+        if (!user.cpf) {
+            res.status(422).json({message: 'O CPF é obrigatorio'})
+            return
+        }
+
+        if(!user.tipo){
+            res.status(422).json({message: 'O tipo é obrigatorio'})
+            return
+        }
+
+        if (!user.password) {
             res.status(422).json({message: 'A senha é obrigatorio'})
             return
         }
 
-        if (!confirmpassword) {
+        if (!user.confirmpassword) {
             res.status(422).json({message: 'A senha de confirmação é obrigatorio'})
             return
         }
 
-        if (password !== confirmpassword){
-            res.status(422).json({message: 'A senha e a confirmação de senha precisam ser iguais'})
+
+        if (user.password !== user.confirmpassword){
+            res.status(422).json({
+
+                    message: 'A senha e a confirmação de senha precisam ser iguais'
+
+                })
         }
 
         // check email if user exists
 
-        const userExists = await User.findOne({ email: email})
-
+        const userExists = await User.findOne({ email: user.email })
 
         if(userExists){
+
             res.status(422).json({
+
                 message: 'Por Favor, utilize outro e-mail',
+
             })
+
             return
+
         }
 
-        const salt = await bcrypt.genSalt(12)
-        const passwordHash = await bcrypt.hash(password, salt)
 
-        const user = new User({
-            name: name,
-            email: email,
-            phone: phone,
+        const salt = await bcrypt.genSalt(12)
+        const passwordHash = await bcrypt.hash(user.password, salt)
+
+        const userFinal = new User({
+
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            cpf: user.cpf,
+            tipo: user.tipo,
             password: passwordHash,
+
         })
+
+        if (user.tipo === "M"){
+            
+           await new Car({ ...car, userId: userFinal._id }).save()
+
+        }
 
         try {
 
-            const newUser = await user.save()
+            const newUser = await userFinal.save()
 
             await createUserToken(newUser, req, res)
 
             return
+
         }catch(error) {
+
             res.status(500).json({message: error})
+
         }
     }
 
@@ -98,6 +141,7 @@ module.exports = class UserController{
         const user = await User.findOne({ email: email })
 
         if(!user){
+
             res.status(422).json({
 
                 message: 'Por favor faça um cadastro',
@@ -248,6 +292,61 @@ module.exports = class UserController{
 
             res.status(500).json({message: err})
             return
+
+        }
+
+    }
+
+    // lucatonUsers, é para localizar o usuario no maps para entrega e recebimento da marmita
+    static async location(req, res){
+
+        try{
+
+        const { id } = req.params
+        const { coordinates } = req.body
+
+        await User.findByIdAndUpdate(id, {
+
+            location: {
+
+                type: 'Point',
+                coordinates,
+
+            },
+            
+
+        } )
+        
+        res.json({error: false})
+    
+      }catch(err){
+
+            res.json({ error: true, message: err.message})
+
+        }
+
+    }
+
+    static async chat(req, res){
+
+        try{
+
+            const { id } = req.params;
+            const { socketId } = req.body;
+
+            await User.findByIdAndUpdate(id, {
+                socketId,
+            })
+
+            res.json({error: false})
+
+        }catch(error){
+
+            res.json({
+
+                error: true, message: err.message
+
+            })
 
         }
 
