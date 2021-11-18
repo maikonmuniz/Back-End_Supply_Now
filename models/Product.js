@@ -5,6 +5,11 @@ const Product = mongoose.model(
     'Product',
     new Schema({
 
+        companyId: {
+            type: Schema.Type.objectId,
+            ref: 'Company',
+        },
+
         name: {
             type: String,
             required: true
@@ -25,7 +30,7 @@ const Product = mongoose.model(
             required: true
         },
 
-        company: Object
+
 
     }, {timestamps: true},
     

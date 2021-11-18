@@ -31,11 +31,13 @@ const Company = mongoose.model(
             required: true
         },
 
+        location: object,
+        recipient_id: String,
+
     }, {timestamps: true},
     
     ),
 
 )
-
 
 module.exports = Company
