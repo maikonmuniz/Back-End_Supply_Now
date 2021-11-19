@@ -1,8 +1,8 @@
-// const router = require('express').Router()
-// const ProductController = require('../controllers/ProductController')
-// const { imageUpload } = require('../helpers/image-upload')
+const router = require('express').Router()
+const ProductController = require('../controllers/ProductController')
+const verifyToken = require("../helpers/verify-token")
+const { imageUpload } = require('../helpers/image-upload')
 
-// router.post('/register', imageUpload.array('images'), ProductController.register)
-// router.get('/', ProductController.products_all)
+router.post('/register', verifyToken, imageUpload.array('images'), ProductController.register)
 
-// module.exports = router
+module.exports = router

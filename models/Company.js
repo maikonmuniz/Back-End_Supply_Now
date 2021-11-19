@@ -26,14 +26,6 @@ const Company = mongoose.model(
         },
 
 
-        phone: {
-            type: String,
-            required: true
-        },
-
-        location: object,
-        recipient_id: String,
-
     }, {timestamps: true},
     
     ),

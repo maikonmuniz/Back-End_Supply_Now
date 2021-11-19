@@ -37,10 +37,6 @@ module.exports = class UserController{
             return
         }
 
-        if (!user.cpf) {
-            res.status(422).json({message: 'O CPF é obrigatorio'})
-            return
-        }
 
         if(!user.tipo){
             res.status(422).json({message: 'O tipo é obrigatorio'})
@@ -221,7 +217,7 @@ module.exports = class UserController{
 
         const id = req.params.id
         const token = getToken(req)
-        const user = await getUserByToken(token) 
+        const user = await getUserByToken(token)
         const { name, email, phone, password, confirmpassword } = req.body
 
         if(req.file){

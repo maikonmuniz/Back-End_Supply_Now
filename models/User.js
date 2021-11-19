@@ -13,14 +13,14 @@ const User = new Schema({
             required: true
         },
 
-        cpf: {
-            type: String,
-            required: true
+        cpf_cnpj: {
+            type: String
+            // required: true
         },
 
         tipo: {
             type: String,
-            enum: ['M', 'P'],
+            enum: ['M', 'C', 'E'],
             required: true,
         },
 
@@ -51,7 +51,7 @@ const User = new Schema({
             type: {type: String},
             coordinates: [],
         },
-        
+
         socketId: String
 
     },

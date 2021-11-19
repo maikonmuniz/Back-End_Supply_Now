@@ -9,10 +9,10 @@ module.exports = class CompanyController {
 
     static async create(req, res){
 
-        const { name, email, cnpj, password, confirmpassword, phone } = req.body
+        const { name, email, cnpj, password, confirmpassword } = req.body
 
         if (!name) {
-            res.status(422).json({message: 'O nome é obrigatorio'})
+            res.status(422).json({message: 'O nome do restaurante é obrigatorio'})
             return
         }
 
@@ -61,8 +61,7 @@ module.exports = class CompanyController {
             name: name,
             email: email,
             cnpj: cnpj,
-            password: passwordHash,
-            phone: phone
+            password: passwordHash
 
         })
 
@@ -100,10 +99,6 @@ module.exports = class CompanyController {
 
         }
 
-        if (!phone) {
-            res.status(422).json({message: 'O telefone é obrigatorio'})
-            return
-        }
 
         // exists user
         const company = await Company.findOne({ email: email })
@@ -137,4 +132,10 @@ module.exports = class CompanyController {
         await createUserToken(company, req, res)
 
     }
+
+    // static async registerProduct(req, res){
+
+    //     const {  }
+
+    // }
 }
