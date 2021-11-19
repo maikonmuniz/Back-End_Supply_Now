@@ -6,8 +6,9 @@ const Product = mongoose.model(
     new Schema({
 
         companyId: {
-            type: Schema.Type.objectId,
-            ref: 'Company',
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         },
 
         name: {
@@ -25,9 +26,9 @@ const Product = mongoose.model(
             required: true
         },
 
-        image: {
-            type: String,
-            required: true
+        images: {
+            type: Array
+            
         },
 
 

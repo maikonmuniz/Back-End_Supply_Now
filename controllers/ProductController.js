@@ -1,4 +1,12 @@
-const product = require('../models/Product')
+const Product = require('../models/Product')
+const User = require('../models/User')
+const express = require('express')
+const getUserByToken = require('../helpers/get-user-by-token')
+const getToken = require('../helpers/get-token')
+const jwt = require('jsonwebtoken')
+const { validationResult } = require('express-validator')
+
+
 
 module.exports = class ProductController{
 
@@ -6,7 +14,7 @@ module.exports = class ProductController{
 
         const {name, price, description} = req.body
 
-        const images = req.files
+        const image = req.files
 
         if(!name){
 
@@ -44,7 +52,7 @@ module.exports = class ProductController{
 
             }
 
-            if(images.length === 0){
+            if(image.length === 0){
                 res.status(422).json({
     
                     message: "A imagem é obrigátoria",
@@ -57,21 +65,35 @@ module.exports = class ProductController{
 
             // aqui será implementado os dados do restaurante
 
+            const token = getToken(req)
+            const company = await getUserByToken(token)
 
 
 
+            const product = new Product({
+                companyId: company._id,
+                name,
+                price, 
+                description,
+                images: [],
+                
+            })
 
+           
 
             //
 
-            images.map((image) => {
-                pet.images.push(image.filename)
+       
+            image.map((img) => {
+        
+                product.images.push(img.filename)
+
             })
     
 
             try {
 
-                const newProduct = await Product.save()
+                const newProduct = await product.save()
 
                 res.status(201).json({
 
