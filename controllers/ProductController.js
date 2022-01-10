@@ -121,7 +121,7 @@ module.exports = class ProductController{
         }
 
         static async productAll(req, res){
-            const products = await Product.find().sort('-createdAt')
+            const products = await Product.find()
 
             res.status(200).json({
                 products: products,
