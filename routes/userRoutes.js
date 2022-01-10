@@ -4,11 +4,13 @@ const UserController = require('../controllers/UserController')
 const verifyToken = require("../helpers/verify-token")
 const { imageUpload } = require("../helpers/image-upload")
 
-router.post('/register', [
+router.post('/register', UserController.register)
+
+/*[
     body('user.email').isEmail().withMessage("Precisa ser um E-mail valido"),
     body('user.tipo').isString().withMessage("Utilize M - (Motorista) ou C - (Cliente)"),
     body('user.password').isLength({min: 8}).withMessage("É necessário a senha ser acima de 8 caracter")
-], UserController.register)
+]*/
 
 router.put('/location/:id', UserController.location)
 router.post('/login', UserController.login)

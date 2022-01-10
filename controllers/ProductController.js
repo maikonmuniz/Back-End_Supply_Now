@@ -1,6 +1,5 @@
 const Product = require('../models/Product')
 const User = require('../models/User')
-const express = require('express')
 const getUserByToken = require('../helpers/get-user-by-token')
 const getToken = require('../helpers/get-token')
 const jwt = require('jsonwebtoken')
@@ -15,6 +14,8 @@ module.exports = class ProductController{
         const {name, price, description} = req.body
 
         const image = req.files
+
+
 
         if(!name){
 
@@ -68,18 +69,25 @@ module.exports = class ProductController{
             const token = getToken(req)
             const company = await getUserByToken(token)
 
-
-
+            /*essa validação é apenas por hora, porque não faz sentido implementar isso,
+             sendo que pelo login o sistema já entede o tipo de usuário*/
+            if(company.tipo != "E"){
+                res.status(422).json({
+    
+                    message: "Apenas empresas podem cadastrar produtos",
+                    
+                })
+    
+                return
+            }
             const product = new Product({
                 companyId: company._id,
-                name,
-                price, 
-                description,
+                name: name,
+                price: price, 
+                description: description,
                 images: [],
                 
             })
-
-           
 
             //
 
@@ -89,19 +97,19 @@ module.exports = class ProductController{
                 product.images.push(img.filename)
 
             })
-    
+            console.log(product)
 
             try {
 
                 const newProduct = await product.save()
-
+                
                 res.status(201).json({
 
                     message: "Produto cadastrado com sucesso!",
                     newProduct,
 
                 })
-    
+                
             } catch (erro){
     
                 res.status(500).json({
@@ -110,5 +118,25 @@ module.exports = class ProductController{
     
                 })
             }         
+        }
+
+        static async productAll(req, res){
+            const products = await Product.find().sort('-createdAt')
+
+            res.status(200).json({
+                products: products,
+            })
+        }
+
+        static async productCompanyAll(req, res){
+            
+            const token = getToken(req)
+            const company = await getUserByToken(token)
+
+            const product = await Product.find({'user._id': company._id})
+
+            res.status(200).json({
+                 product,
+            })
         }
     }

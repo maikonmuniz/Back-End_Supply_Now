@@ -4,27 +4,14 @@ const createUserToken = require('../helpers/create-token-user')
 const getUserByToken = require('../helpers/get-user-by-token')
 const getToken = require('../helpers/get-token')
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
 module.exports = class CompanyController {
 
     static async create(req, res){
 
-        const { name, email, cnpj, password, confirmpassword } = req.body
+        const { name, email, cpf_cnpj, password, confirmpassword } = req.body
 
-        if (!name) {
-            res.status(422).json({message: 'O nome do restaurante é obrigatorio'})
-            return
-        }
-
-        if (!email) {
-            res.status(422).json({message: 'O email é obrigatorio'})
-            return
-        }
-
-        if (!cnpj) {
-            res.status(422).json({message: 'O cnpj é obrigatorio'})
-            return
-        }
 
         if (!password) {
             res.status(422).json({message: 'A senha é obrigatorio'})
@@ -42,7 +29,7 @@ module.exports = class CompanyController {
 
         // check email if user exists
 
-        const companyExists = await Company.findOne({ email: email})
+        const companyExists = await User.findOne({ email: email})
 
         if(companyExists){
             res.status(422).json({
@@ -56,7 +43,7 @@ module.exports = class CompanyController {
         const salt = await bcrypt.genSalt(12)
         const passwordHash = await bcrypt.hash(password, salt)
 
-        const company = new Company({
+        const company = new User({
 
             name: name,
             email: email,
