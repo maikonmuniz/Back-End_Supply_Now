@@ -16,7 +16,7 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000"}))
 // confid folder for images
 app.use(express.static('public'))
 
-
+app.use(timeout('15s'))
 //Routes
 
 const productRoutes = require('./routes/productRoutes')
