@@ -11,7 +11,11 @@ app.use(express.json())
 app.use(bodyParser.json())
 
 // config cors
-app.use(cors({ credentials: true, origin: "http://localhost:3000"}))
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 // confid folder for images
 app.use(express.static('public'))
