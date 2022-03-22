@@ -120,9 +120,4 @@ module.exports = class CompanyController {
 
     }
 
-    // static async registerProduct(req, res){
-
-    //     const {  }
-
-    // }
 }
